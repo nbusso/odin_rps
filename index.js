@@ -19,7 +19,7 @@ function getHumanChoice() {
     return selectedHand.toLowerCase();
   }
 
-  return selectedHand;
+  return selectedHand.toLowerCase();
 }
 
 // play full game logic
@@ -90,8 +90,5 @@ function playGame() {
     alert(`BETTER LUCK NEXT TIME! YOU LOST ${computerScore} to ${humanScore}`);
   }
 }
-
-/* console.log(humanSelection);
-console.log(computerSelection); */
 
 playGame();
