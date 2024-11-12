@@ -23,7 +23,14 @@ function getHumanChoice() {
 // round start
 btnContainer.addEventListener("click", (e) => {
   console.log(`Player selected: "${e.target.id}"`);
-  playerChoice = e.target.id;
+  if (e.target.nodeName === "BUTTON" && e.target.id != "reset") {
+    playerChoice = e.target.id;
+  } else if (e.target.id === "reset") {
+    resetGame();
+    return;
+  } else {
+    return;
+  }
 
   playRound(getHumanChoice(), getComputerChoice());
 });
@@ -41,6 +48,9 @@ const scoreRenderer = () => {
   renderDraws.textContent = drawNumber;
   renderPlayerScore.textContent = humanScore;
   renderComputerScore.textContent = computerScore;
+
+  if (humanScore === 5) finishGame("player");
+  if (computerScore === 5) finishGame("computer");
 };
 
 const logRenderer = (text) => {
@@ -90,75 +100,37 @@ function playRound(humanChoice, computerChoice) {
 
   scoreRenderer();
 }
-// play full game logic
-/* function playGame() {
-  let humanScore = 0;
-  let computerScore = 0;
-  let roundNumber = 0;
-  let drawNumber = 0;
 
-  function playRound(humanChoice, computerChoice) {
-    roundNumber += 1;
+const toggleMatch = () => {
+  Array.from(btnContainer.children).forEach((e) => {
+    e.toggleAttribute("disabled");
+  });
+};
 
-    // play round logic
-    if (humanChoice === "rock") {
-      if (computerChoice === "rock") {
-        console.log("DRAW!, both players selected ROCK!");
-        drawNumber += 1;
-        roundNumber -= 1;
-      } else if (computerChoice === "paper") {
-        console.log("You lose! PAPER beats ROCK!");
-        computerScore += 1;
-      } else {
-        console.log("You win! ROCK beats SCISSORS");
-        humanScore += 1;
-      }
-    } else if (humanChoice === "paper") {
-      if (computerChoice === "rock") {
-        console.log("You win! PAPER beats ROCK!");
-        humanScore += 1;
-      } else if (computerChoice === "paper") {
-        console.log("DRAW!, both players selected PAPER!");
-        drawNumber += 1;
-        roundNumber -= 1;
-      } else {
-        console.log("You lose! SCISSORS beats PAPER");
-        computerScore += 1;
-      }
-    } else {
-      if (computerChoice === "rock") {
-        console.log("You lose! ROCK beats SCISSORS!");
-        computerScore += 1;
-      } else if (computerChoice === "paper") {
-        console.log("You win! SCISSORS beats PAPER!");
-        humanScore += 1;
-      } else {
-        console.log("DRAW!, both players selected SCISSORS!");
-        drawNumber += 1;
-        roundNumber -= 1;
-      }
-    }
-  }
+const finishGame = (winner) => {
+  toggleMatch();
 
-  while (roundNumber < 5) {
-    const humanSelection = getHumanChoice();
-    const computerSelection = getComputerChoice();
-    playRound(humanSelection, computerSelection);
-    console.log(`
-        \nRound N° ${roundNumber}
-        \n --
-        \nHuman Score: ${humanScore}
-        \nComputer Score: ${computerScore}
-        \nDraws: ${drawNumber}`);
-  }
-
-  if (humanScore > computerScore) {
-    alert(`CONGRATULATIONS! YOU WON ${humanScore} to ${computerScore}`);
+  if (winner === "player") {
+    logRenderer("PLAYER WINS!! Congratulations");
   } else {
-    alert(`BETTER LUCK NEXT TIME! YOU LOST ${computerScore} to ${humanScore}`);
+    logRenderer("COMPUTER WINS! Better luck next time!");
   }
-}
+};
 
-playGame();
+const resetGame = () => {
+  // scores reset
+  playerChoice = "";
+  roundNumber = 0;
+  drawNumber = 0;
+  humanScore = 0;
+  computerScore = 0;
 
- */
+  // log reset
+  //matchLog.removeChild("LI");
+  while (matchLog.firstChild) {
+    matchLog.removeChild(matchLog.firstChild);
+  }
+
+  scoreRenderer();
+  toggleMatch();
+};
